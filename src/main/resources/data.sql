@@ -1,0 +1,12 @@
+-- First, make sure the table exists
+CREATE TABLE IF NOT EXISTS images (
+    id SERIAL PRIMARY KEY,
+    data BINARY LARGE OBJECT,
+    name VARCHAR(255)
+);
+
+-- Insert some sample images with small dummy binary data
+INSERT INTO images (name, data) VALUES 
+    ('sample1.jpg', X'FFD8FFE000104A46494600010100000100010000FFDB00430001'), 
+    ('sample2.png', X'89504E470D0A1A0A0000000D4948445200000001000000010802'), 
+    ('sample3.gif', X'474946383961010001008000FF00FFFFFF2C0000000001000100');
