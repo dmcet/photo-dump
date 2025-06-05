@@ -1,11 +1,18 @@
 package de.cetvericov.photodump.controllers
 
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.RequestParam
 
-@RestController
+@Controller
 class PhotoDumpController {
-
-    @GetMapping("/")
-    fun index() = "Welcome to the PhotoDump application!"
+    @GetMapping("/greeting")
+    fun greeting(
+        @RequestParam(value = "name", required = false, defaultValue = "World") name: String,
+        model: Model
+    ): String {
+        model.addAttribute("name", name)
+        return "greeting"
+    }
 }
