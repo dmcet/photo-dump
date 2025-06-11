@@ -16,7 +16,7 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/api/v1/images")
-@CrossOrigin(origins = ["http://localhost:3000"])
+@CrossOrigin(origins = ["http://localhost:5173"])
 class ImagesController(private val imageRepository: ImageRepository) {
     @GetMapping
     fun getImages(): Flow<ImageDto> = imageRepository.findAll().map(ImageDto::fromEntity).asFlow()
