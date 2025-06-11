@@ -7,12 +7,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
+import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.*
 import java.net.URI
+import java.util.concurrent.TimeUnit
 
 @RestController
 @RequestMapping("/api/v1/images")
@@ -22,14 +24,21 @@ class ImagesController(private val imageRepository: ImageRepository) {
     fun getImages(): Flow<ImageDto> = imageRepository.findAll().map(ImageDto::fromEntity).asFlow()
 
     @GetMapping("/{id}")
-    suspend fun getImageData(@PathVariable id: Long): ByteArray? {
-        val imageOrNull = imageRepository.findById(id).awaitFirstOrNull()
+    suspend fun getImageData(@PathVariable id: Long): ResponseEntity<ByteArray> {
+        val imageOrNull = imageRepository.findById(id).awaitFirstOrNull() ?: return ResponseEntity.notFound().build()
 
-        if (imageOrNull == null) {
-            return null
+        val contentType = when {
+            imageOrNull.name?.endsWith(".jpg", true) == true ||
+                    imageOrNull.name?.endsWith(".jpeg", true) == true -> MediaType.IMAGE_JPEG
+
+            imageOrNull.name?.endsWith(".png", true) == true -> MediaType.IMAGE_PNG
+            imageOrNull.name?.endsWith(".gif", true) == true -> MediaType.IMAGE_GIF
+            else -> MediaType.APPLICATION_OCTET_STREAM
         }
 
-        return imageOrNull.data
+        return ResponseEntity.ok().contentType(contentType)
+            .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS))
+            .body(imageOrNull.data)
     }
 
     @PostMapping("upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])

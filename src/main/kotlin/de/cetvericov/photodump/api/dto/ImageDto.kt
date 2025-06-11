@@ -4,12 +4,14 @@ import de.cetvericov.photodump.persistence.entity.ImageEntity
 
 data class ImageDto(
     val id: Long?,
-    val name: String
+    val name: String,
+    val url: String
 ) {
     companion object {
         fun fromEntity(image: ImageEntity) = ImageDto(
             id = image.id,
-            name = image.name ?: ""
+            name = image.name ?: "",
+            url = "/api/v1/images/${image.id}"
         )
     }
 }
