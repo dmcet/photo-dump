@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
 @RestController
-@RequestMapping("/images")
+@RequestMapping("/api/v1/images")
 class ImagesController(private val imageRepository: ImageRepository) {
 
     @GetMapping
@@ -40,7 +40,7 @@ class ImagesController(private val imageRepository: ImageRepository) {
         return imageOrNull.data
     }
 
-    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping("upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     suspend fun uploadImage(
         @RequestPart("file") filePart: FilePart
     ): ResponseEntity<Unit> {
@@ -60,7 +60,7 @@ class ImagesController(private val imageRepository: ImageRepository) {
 
         return ResponseEntity
             .status(HttpStatus.SEE_OTHER)
-            .location(URI.create("/images/${savedImage.id}"))
+            .location(URI.create("/api/v1/images/${savedImage.id}"))
             .build()
     }
 
