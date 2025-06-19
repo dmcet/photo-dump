@@ -62,6 +62,7 @@ class FileSystemImageStoreService(
                 null
             }
 
+            logger.info("Serving $filename")
             imagePath.readBytes()
         } catch (e: Exception) {
             logger.error("Failed to get $filename", e)
