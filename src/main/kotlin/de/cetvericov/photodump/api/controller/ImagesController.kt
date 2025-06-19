@@ -71,7 +71,6 @@ class ImagesController(private val imageRepository: ImageRepository, private val
 
     @DeleteMapping("/{id}")
     suspend fun deleteImage(@PathVariable id: Long) {
-
         if (!imageRepository.existsById(id).awaitSingle()) {
             return
         }
