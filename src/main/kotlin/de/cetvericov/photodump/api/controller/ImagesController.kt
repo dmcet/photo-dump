@@ -3,6 +3,7 @@ package de.cetvericov.photodump.api.controller
 import de.cetvericov.photodump.api.dto.ImageDto
 import de.cetvericov.photodump.persistence.entity.ImageEntity
 import de.cetvericov.photodump.persistence.repository.ImageRepository
+import de.cetvericov.photodump.persistence.service.ImageStoreService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -19,13 +20,15 @@ import java.util.concurrent.TimeUnit
 @RestController
 @RequestMapping("/api/v1/images")
 @CrossOrigin(origins = ["http://localhost:5173"])
-class ImagesController(private val imageRepository: ImageRepository) {
+class ImagesController(private val imageRepository: ImageRepository, private val imageStoreService: ImageStoreService) {
     @GetMapping
     fun getImages(): Flow<ImageDto> = imageRepository.findAll().map(ImageDto::fromEntity).asFlow()
 
     @GetMapping("/{id}")
     suspend fun getImageData(@PathVariable id: Long): ResponseEntity<ByteArray> {
+
         val imageOrNull = imageRepository.findById(id).awaitFirstOrNull() ?: return ResponseEntity.notFound().build()
+        val imageBytes = imageStoreService.getImage(imageOrNull.name!!) ?: return ResponseEntity.notFound().build()
 
         val contentType = when {
             imageOrNull.name?.endsWith(".jpg", true) == true ||
@@ -38,7 +41,7 @@ class ImagesController(private val imageRepository: ImageRepository) {
 
         return ResponseEntity.ok().contentType(contentType)
             .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS))
-            .body(imageOrNull.data)
+            .body(imageBytes)
     }
 
     @PostMapping("upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -52,9 +55,10 @@ class ImagesController(private val imageRepository: ImageRepository) {
             bytes
         }.reduce { acc, bytes -> acc + bytes }.awaitSingle()
 
+        imageStoreService.saveImage(filePart.filename(), bytes)
+
         val imageEntity = ImageEntity(
-            name = filePart.filename(),
-            data = bytes
+            name = filePart.filename()
         )
 
         val savedImage = imageRepository.save(imageEntity).awaitSingle()
@@ -66,5 +70,13 @@ class ImagesController(private val imageRepository: ImageRepository) {
     }
 
     @DeleteMapping("/{id}")
-    suspend fun deleteImage(@PathVariable id: Long) = imageRepository.deleteById(id).awaitFirstOrNull()
+    suspend fun deleteImage(@PathVariable id: Long) {
+
+        if (!imageRepository.existsById(id).awaitSingle()) {
+            return
+        }
+
+        imageStoreService.deleteImage(imageRepository.findById(id).awaitFirstOrNull()?.name!!)
+        imageRepository.deleteById(id).awaitFirstOrNull()
+    }
 }
