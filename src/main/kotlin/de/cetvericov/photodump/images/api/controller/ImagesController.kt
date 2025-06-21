@@ -1,9 +1,9 @@
-package de.cetvericov.photodump.api.controller
+package de.cetvericov.photodump.images.api.controller
 
-import de.cetvericov.photodump.api.dto.ImageDto
-import de.cetvericov.photodump.persistence.entity.ImageEntity
-import de.cetvericov.photodump.persistence.repository.ImageRepository
-import de.cetvericov.photodump.persistence.service.ImageStoreService
+import de.cetvericov.photodump.images.api.dto.ImageDto
+import de.cetvericov.photodump.images.persistence.entity.ImageEntity
+import de.cetvericov.photodump.images.persistence.repository.ImageRepository
+import de.cetvericov.photodump.images.persistence.service.ImageStoreService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
