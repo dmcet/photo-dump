@@ -31,11 +31,11 @@ class ImagesController(private val imageRepository: ImageRepository, private val
         val imageBytes = imageStoreService.getImage(imageOrNull.name!!) ?: return ResponseEntity.notFound().build()
 
         val contentType = when {
-            imageOrNull.name?.endsWith(".jpg", true) == true ||
-                    imageOrNull.name?.endsWith(".jpeg", true) == true -> MediaType.IMAGE_JPEG
+            imageOrNull.name.endsWith(".jpg", true)
+                    || imageOrNull.name.endsWith(".jpeg", true) -> MediaType.IMAGE_JPEG
 
-            imageOrNull.name?.endsWith(".png", true) == true -> MediaType.IMAGE_PNG
-            imageOrNull.name?.endsWith(".gif", true) == true -> MediaType.IMAGE_GIF
+            imageOrNull.name.endsWith(".png", true) -> MediaType.IMAGE_PNG
+            imageOrNull.name.endsWith(".gif", true) -> MediaType.IMAGE_GIF
             else -> MediaType.APPLICATION_OCTET_STREAM
         }
 
