@@ -6,5 +6,11 @@ import reactor.core.publisher.Mono
 
 
 interface UserRepository: ReactiveCrudRepository<UserEntity, Long> {
-    fun findByUsername(username: String): Mono<UserEntity>
+    /**
+ * Retrieves a user entity matching the specified username.
+ *
+ * @param username The username to search for.
+ * @return A Mono emitting the user entity if found, or empty if no user matches the username.
+ */
+fun findByUsername(username: String): Mono<UserEntity>
 }

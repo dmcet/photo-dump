@@ -11,7 +11,15 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 @Configuration
 @EnableWebFluxSecurity
 class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
-    @Bean
+    /**
+             * Configures the security filter chain for the reactive web application.
+             *
+             * Sets up endpoint access rules, disables CSRF, HTTP Basic, and form login, and adds a JWT authentication filter.
+             * Permits all requests to the login and registration endpoints, requires authentication for image-related and all other endpoints.
+             *
+             * @return The configured reactive security filter chain.
+             */
+            @Bean
     fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain =
         http
             .csrf { it.disable() }
@@ -25,6 +33,11 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
             .formLogin { it.disable() }
             .build()
 
+    /**
+     * Provides a BCryptPasswordEncoder bean for hashing user passwords.
+     *
+     * @return A BCryptPasswordEncoder instance.
+     */
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
 }

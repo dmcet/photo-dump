@@ -24,6 +24,15 @@ class ImagesController(private val imageRepository: ImageRepository, private val
     @GetMapping
     fun getImages(): Flow<ImageDto> = imageRepository.findAll().map(ImageDto::fromEntity).asFlow()
 
+    /**
+     * Retrieves the binary data of an image by its ID.
+     *
+     * Returns the image file as a byte array with the appropriate content type and cache control headers.
+     * Responds with 404 Not Found if the image does not exist or cannot be retrieved from storage.
+     *
+     * @param id The unique identifier of the image to retrieve.
+     * @return HTTP 200 OK with the image data, or 404 Not Found if the image is missing.
+     */
     @GetMapping("/{id}")
     suspend fun getImageData(@PathVariable id: Long): ResponseEntity<ByteArray> {
 

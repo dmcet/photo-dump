@@ -25,7 +25,15 @@ class UserController(
     private val userDetailsService: SecurityUserDetailsService
 
 ) {
-    @PostMapping("/login")
+    /**
+             * Authenticates a user with the provided credentials and returns a JWT token on success.
+             *
+             * Accepts a login request containing a username and password. If authentication is successful, responds with a JWT token wrapped in a `LoginResponse` and HTTP 200 OK. If authentication fails, responds with HTTP 401 Unauthorized.
+             *
+             * @param loginRequest The login credentials containing username and password.
+             * @return A `ResponseEntity` containing a `LoginResponse` with a JWT token on success, or HTTP 401 Unauthorized on failure.
+             */
+            @PostMapping("/login")
     suspend fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<LoginResponse> =
         userDetailsService.findByUsername(loginRequest.username)
             .filter { user -> passwordEncoder.matches(loginRequest.password, user.password) }
@@ -36,6 +44,12 @@ class UserController(
             .awaitSingle()
 
 
+    /**
+     * Handles user registration by validating input and creating a new user account.
+     *
+     * Returns HTTP 400 Bad Request if the passwords do not match or if the username is already taken.
+     * Returns HTTP 200 OK on successful registration.
+     */
     @PostMapping("/register")
     suspend fun register(@RequestBody registerRequest: RegisterRequest): ResponseEntity<Unit> {
         if (registerRequest.password != registerRequest.passwordRepeated) {

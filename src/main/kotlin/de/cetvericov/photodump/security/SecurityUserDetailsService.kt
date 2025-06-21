@@ -11,7 +11,15 @@ import reactor.core.publisher.Mono
 class SecurityUserDetailsService(
     private val userRepository: UserRepository
 ) : ReactiveUserDetailsService {
-    override fun findByUsername(username: String): Mono<UserDetails> =
+    /**
+         * Retrieves user details for authentication by username.
+         *
+         * Looks up a user by username from the repository and maps the result to a Spring Security `UserDetails` object with the role "USER".
+         *
+         * @param username The username to search for.
+         * @return A `Mono` emitting the user details if found, or empty if no user exists with the given username.
+         */
+        override fun findByUsername(username: String): Mono<UserDetails> =
         userRepository.findByUsername(username).map { user ->
             User.builder()
                 .username(user.username)
