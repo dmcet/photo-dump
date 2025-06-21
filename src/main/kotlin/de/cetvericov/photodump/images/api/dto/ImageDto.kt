@@ -1,6 +1,6 @@
-package de.cetvericov.photodump.api.dto
+package de.cetvericov.photodump.images.api.dto
 
-import de.cetvericov.photodump.persistence.entity.ImageEntity
+import de.cetvericov.photodump.images.persistence.entity.ImageEntity
 
 data class ImageDto(
     val id: Long?,

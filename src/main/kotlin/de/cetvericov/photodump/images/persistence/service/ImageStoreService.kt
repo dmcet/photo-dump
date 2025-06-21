@@ -1,4 +1,4 @@
-package de.cetvericov.photodump.persistence.service
+package de.cetvericov.photodump.images.persistence.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
