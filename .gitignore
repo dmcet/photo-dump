@@ -13,6 +13,9 @@ target/
 .springBeans
 .sts4-cache
 
+### SECRETS ###
+src/main/resources/secret.properties
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
