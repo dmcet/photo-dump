@@ -17,26 +17,31 @@ class TokenService {
         return generateAndStoreToken(username)
     }
 
-    fun validateToken(username: String, token: Token): Boolean {
-        logger.info("Validating token for user ${token.token}")
-        if (!tokenMap.containsKey(username)) {
-            logger.warn("Token for user $username does not exist")
+    fun validateToken(token: Token): Boolean {
+        logger.info("Validating token $token")
+        if (!tokenMap.containsValue(token)) {
+            logger.warn("No such token")
             return false
         }
-
-        return tokenMap[username] == token
+        return true
     }
 
     fun revokeToken(username: String, token: Token) {
-        if (!validateToken(username, token)) {
-            logger.warn("Token for user $username is not valid, nothing to revoke")
+        logger.info("Trying to revoke token for user $username")
+
+        if (!tokenMap.contains(username)) {
+            logger.warn("No token for user $username")
+            return
+        }
+
+        if (tokenMap[username] != token) {
+            logger.warn("Token mismatch")
             return
         }
 
         logger.info("Revoking token for user $username")
         tokenMap.remove(username)
     }
-
 
     private fun generateAndStoreToken(username: String): Token {
         tokenMap[username] = Token(UUID.randomUUID().toString())

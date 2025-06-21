@@ -12,7 +12,7 @@ data class LoginResponse(
 )
 
 data class LogoutRequest(
-    val userName: String,
+    val username: String,
     val token: Token
 )
 
