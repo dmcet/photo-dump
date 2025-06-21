@@ -18,16 +18,35 @@ class JwtService(
     @Value("\${app.jwt.expiration}")
     private val expiration: Long
 ) {
-    fun generateToken(userDetails: UserDetails): String = Jwts.builder()
+    /**
+         * Generates a JWT token for the specified user.
+         *
+         * The token includes the user's username as the subject, the current time as the issued date, and an expiration date based on the configured duration.
+         *
+         * @param userDetails The user details containing the username to include in the token.
+         * @return A signed JWT token as a string.
+         */
+        fun generateToken(userDetails: UserDetails): String = Jwts.builder()
         .setSubject(userDetails.username)
         .setIssuedAt(Date())
         .setExpiration(Date(System.currentTimeMillis() + expiration))
         .signWith(getSigningKey(), SignatureAlgorithm.HS256)
         .compact()
 
+    /**
+     * Decodes the Base64-encoded secret and returns the HMAC SHA signing key for JWT operations.
+     *
+     * @return The signing key derived from the configured secret.
+     */
     @OptIn(ExperimentalEncodingApi::class)
     private fun getSigningKey(): Key = Keys.hmacShaKeyFor(Base64.decode(secret))
 
+    /**
+     * Checks whether the provided JWT token is valid and properly signed.
+     *
+     * @param token The JWT token to validate.
+     * @return `true` if the token is valid and can be parsed with the signing key, `false` otherwise.
+     */
     fun validateToken(token: String): Boolean = try {
         Jwts.parserBuilder()
             .setSigningKey(getSigningKey())
@@ -38,7 +57,13 @@ class JwtService(
         false
     }
 
-    fun getUsernameFromToken(token: String): String = Jwts.parserBuilder()
+    /**
+         * Extracts the username from the subject claim of a JWT.
+         *
+         * @param token The JWT from which to extract the username.
+         * @return The username contained in the token's subject claim.
+         */
+        fun getUsernameFromToken(token: String): String = Jwts.parserBuilder()
         .setSigningKey(getSigningKey())
         .build()
         .parseClaimsJws(token)

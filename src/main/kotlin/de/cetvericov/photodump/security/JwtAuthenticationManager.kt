@@ -13,7 +13,16 @@ class JwtAuthenticationManager(
     private val jwtService: JwtService,
     private val userDetailsService: SecurityUserDetailsService
 ) : ReactiveAuthenticationManager {
-    override fun authenticate(authentication: Authentication): Mono<Authentication> = Mono.justOrEmpty(authentication)
+    /**
+         * Authenticates a user based on a JWT bearer token.
+         *
+         * Extracts the username from the provided JWT, retrieves user details, and validates the token.
+         * Returns an authenticated token with user authorities if successful, or an error if authentication fails.
+         *
+         * @param authentication The authentication request containing the JWT bearer token.
+         * @return A Mono emitting the authenticated token or an error if the JWT is invalid.
+         */
+        override fun authenticate(authentication: Authentication): Mono<Authentication> = Mono.justOrEmpty(authentication)
         .cast(BearerToken::class.java)
         .flatMap { jwt ->
             try {
