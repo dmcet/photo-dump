@@ -1,5 +1,7 @@
 package de.cetvericov.photodump.images.persistence.service
 
+import de.cetvericov.photodump.images.service.ImagePreprocessingService
+import de.cetvericov.photodump.images.service.PngImagePreprocessingService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory

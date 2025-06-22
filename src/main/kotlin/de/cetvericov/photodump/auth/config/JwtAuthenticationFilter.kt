@@ -1,8 +1,6 @@
-package de.cetvericov.photodump.security
+package de.cetvericov.photodump.auth.config
 
-import de.cetvericov.photodump.auth.service.JwtService
 import org.springframework.http.HttpHeaders
-import org.springframework.security.config.authentication.AuthenticationManagerBeanDefinitionParser
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono

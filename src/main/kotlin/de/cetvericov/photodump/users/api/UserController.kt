@@ -1,9 +1,9 @@
 package de.cetvericov.photodump.users.api
 
 import de.cetvericov.photodump.auth.service.JwtService
-import de.cetvericov.photodump.security.SecurityUserDetailsService
+import de.cetvericov.photodump.auth.config.SecurityUserDetailsService
 import de.cetvericov.photodump.users.api.dto.LoginRequest
-import de.cetvericov.photodump.users.api.dto.LoginResponse
+import de.cetvericov.photodump.users.api.dto.AccessTokenResponse
 import de.cetvericov.photodump.users.api.dto.RegisterRequest
 import de.cetvericov.photodump.users.persistence.entity.UserEntity
 import de.cetvericov.photodump.users.persistence.repository.UserRepository
@@ -29,11 +29,11 @@ class UserController(
 
 ) {
     @PostMapping("/login")
-    suspend fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<LoginResponse> =
+    suspend fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<AccessTokenResponse> =
         userDetailsService.findByUsername(loginRequest.username)
             .filter { user -> passwordEncoder.matches(loginRequest.password, user.password) }
             .map { user ->
-                ResponseEntity.ok(LoginResponse(jwtService.generateToken(user)))
+                ResponseEntity.ok(AccessTokenResponse(jwtService.generateToken(user)))
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build())
             .awaitSingle()

@@ -1,4 +1,4 @@
-package de.cetvericov.photodump.images.dto
+package de.cetvericov.photodump.images.api.dto
 
 import de.cetvericov.photodump.images.persistence.entity.ImageMetadataEntity
 

@@ -1,4 +1,4 @@
-package de.cetvericov.photodump.security
+package de.cetvericov.photodump.auth.config
 
 import de.cetvericov.photodump.users.persistence.repository.UserRepository
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
