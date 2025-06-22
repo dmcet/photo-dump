@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS images (
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(255),
-    password VARCHAR(255)
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(500) NOT NULL,
+    email VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
