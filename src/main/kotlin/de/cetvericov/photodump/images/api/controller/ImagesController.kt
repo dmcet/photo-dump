@@ -1,9 +1,9 @@
-package de.cetvericov.photodump.api.controller
+package de.cetvericov.photodump.images.api.controller
 
-import de.cetvericov.photodump.api.dto.ImageDto
-import de.cetvericov.photodump.persistence.entity.ImageEntity
-import de.cetvericov.photodump.persistence.repository.ImageRepository
-import de.cetvericov.photodump.persistence.service.ImageStoreService
+import de.cetvericov.photodump.images.api.dto.ImageDto
+import de.cetvericov.photodump.images.persistence.entity.ImageEntity
+import de.cetvericov.photodump.images.persistence.repository.ImageRepository
+import de.cetvericov.photodump.images.persistence.service.ImageStoreService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -28,14 +28,15 @@ class ImagesController(private val imageRepository: ImageRepository, private val
     suspend fun getImageData(@PathVariable id: Long): ResponseEntity<ByteArray> {
 
         val imageOrNull = imageRepository.findById(id).awaitFirstOrNull() ?: return ResponseEntity.notFound().build()
-        val imageBytes = imageStoreService.getImage(imageOrNull.name!!) ?: return ResponseEntity.notFound().build()
+        val imageName = imageOrNull.name ?: return ResponseEntity.notFound().build()
+        val imageBytes = imageStoreService.getImage(imageName) ?: return ResponseEntity.notFound().build()
 
         val contentType = when {
-            imageOrNull.name?.endsWith(".jpg", true) == true ||
-                    imageOrNull.name?.endsWith(".jpeg", true) == true -> MediaType.IMAGE_JPEG
+            imageOrNull.name.endsWith(".jpg", true)
+                    || imageOrNull.name.endsWith(".jpeg", true) -> MediaType.IMAGE_JPEG
 
-            imageOrNull.name?.endsWith(".png", true) == true -> MediaType.IMAGE_PNG
-            imageOrNull.name?.endsWith(".gif", true) == true -> MediaType.IMAGE_GIF
+            imageOrNull.name.endsWith(".png", true) -> MediaType.IMAGE_PNG
+            imageOrNull.name.endsWith(".gif", true) -> MediaType.IMAGE_GIF
             else -> MediaType.APPLICATION_OCTET_STREAM
         }
 
