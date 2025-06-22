@@ -60,10 +60,10 @@ class ImagesController(
             bytes
         }.reduce { acc, bytes -> acc + bytes }.awaitSingle()
 
-        imageStoreService.saveImage(filePart.name(), bytes)
+        imageStoreService.saveImage(filePart.filename(), bytes)
 
         val imageMetadataEntity = ImageMetadataEntity(
-            name = filePart.name()
+            name = filePart.filename()
         )
 
         val savedImage = imageMetadataRepository.save(imageMetadataEntity).awaitSingle()
