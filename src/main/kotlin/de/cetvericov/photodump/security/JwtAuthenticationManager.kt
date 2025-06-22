@@ -18,7 +18,12 @@ class JwtAuthenticationManager(
         .flatMap { jwt ->
             try {
                 val username = jwtService.getUsernameFromToken(jwt.credentials)
-                userDetailsService.findByUsername(username).filter { jwtService.validateToken(jwt.credentials) }
+
+                if (!jwtService.validateToken(jwt.credentials)) {
+                    return@flatMap Mono.error(BadCredentialsException("Invalid JWT token."))
+                }
+
+                userDetailsService.findByUsername(username)
                     .map { userDetails ->
                         UsernamePasswordAuthenticationToken(
                             userDetails,

@@ -38,10 +38,14 @@ class JwtService(
         false
     }
 
-    fun getUsernameFromToken(token: String): String = Jwts.parserBuilder()
-        .setSigningKey(getSigningKey())
-        .build()
-        .parseClaimsJws(token)
-        .body
-        .subject
+    fun getUsernameFromToken(token: String): String = try {
+        Jwts.parserBuilder()
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .body
+            .subject
+    } catch (e: Exception) {
+        throw IllegalArgumentException("Invalid JWT token", e)
+    }
 }
