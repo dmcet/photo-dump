@@ -28,7 +28,8 @@ class ImagesController(private val imageRepository: ImageRepository, private val
     suspend fun getImageData(@PathVariable id: Long): ResponseEntity<ByteArray> {
 
         val imageOrNull = imageRepository.findById(id).awaitFirstOrNull() ?: return ResponseEntity.notFound().build()
-        val imageBytes = imageStoreService.getImage(imageOrNull.name!!) ?: return ResponseEntity.notFound().build()
+        val imageName = imageOrNull.name ?: return ResponseEntity.notFound().build()
+        val imageBytes = imageStoreService.getImage(imageName) ?: return ResponseEntity.notFound().build()
 
         val contentType = when {
             imageOrNull.name.endsWith(".jpg", true)
