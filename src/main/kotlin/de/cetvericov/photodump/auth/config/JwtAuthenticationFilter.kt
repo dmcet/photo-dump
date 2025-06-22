@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 
 @Component
 class JwtAuthenticationFilter(
-    private val jwtAuthenticationManager: JwtAuthenticationManager
+    jwtAuthenticationManager: JwtAuthenticationManager
 ) : AuthenticationWebFilter(jwtAuthenticationManager) {
     init {
         setServerAuthenticationConverter { exchange ->
