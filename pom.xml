@@ -101,6 +101,11 @@
             <artifactId>hibernate-validator</artifactId>
             <version>9.0.1.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.19</version>
+        </dependency>
 
 
     </dependencies>

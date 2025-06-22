@@ -1,4 +1,4 @@
-package de.cetvericov.photodump.users.api.controller
+package de.cetvericov.photodump.users.api
 
 import de.cetvericov.photodump.auth.service.JwtService
 import de.cetvericov.photodump.security.SecurityUserDetailsService
@@ -11,9 +11,12 @@ import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
-
 
 @RestController
 @RequestMapping("/api/v1/user")

@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
 @Table("images")
-data class ImageEntity(
+data class ImageMetadataEntity(
     @Id
     val id: Long? = null,
     val name: String? = null
