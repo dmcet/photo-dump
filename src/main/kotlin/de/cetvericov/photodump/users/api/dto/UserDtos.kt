@@ -1,10 +1,6 @@
 package de.cetvericov.photodump.users.api.dto
 
-import com.fasterxml.jackson.annotation.JsonAlias
-import com.fasterxml.jackson.annotation.JsonKey
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonValue
-import com.fasterxml.jackson.databind.annotation.JsonNaming
 import jakarta.validation.constraints.NotBlank
 
 data class LoginRequest(
