@@ -27,8 +27,8 @@ class ImageController(
     private val userRepository: UserRepository
 ) {
     @GetMapping
-    suspend fun getImages(): ImageDto =
-        imageMetadataRepository.findAll().map(ImageDto::fromEntity).awaitSingle()
+    suspend fun getImages(): List<ImageDto> =
+        imageMetadataRepository.findAll().map(ImageDto::fromEntity).collectList().awaitSingle()
 
     @GetMapping("/{id}")
     suspend fun getImageData(@PathVariable id: Long): ResponseEntity<ByteArray> {
