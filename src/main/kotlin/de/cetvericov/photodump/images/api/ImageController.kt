@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 @RestController
 @RequestMapping("/api/v1/images")
 @CrossOrigin(origins = ["http://localhost:5173"])
-class ImagesController(
+class ImageController(
     private val imageMetadataRepository: ImageMetadataRepository,
     private val imageStoreService: ImageStoreService,
     private val userRepository: UserRepository
