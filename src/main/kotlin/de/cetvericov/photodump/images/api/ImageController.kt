@@ -8,6 +8,7 @@ import de.cetvericov.photodump.users.persistence.repository.UserRepository
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -67,9 +68,14 @@ class ImageController(
 
         imageStoreService.saveImage(filePart.filename(), bytes)
 
+        val user = userRepository.findByUsername(authentication.principal.toString()).awaitSingle()
+        if (user.id == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
+
         val imageMetadataEntity = ImageMetadataEntity(
             name = filePart.filename(),
-            ownerId = userRepository.findByUsername(authentication.principal.toString()).awaitSingle().id!!
+            ownerId = user.id
         )
 
         imageMetadataRepository.save(imageMetadataEntity).awaitSingle()
@@ -87,22 +93,28 @@ class ImageController(
             return ResponseEntity.notFound().build()
         }
 
-        imageStoreService.deleteImage(imageMetadataRepository.findById(id).awaitFirstOrNull()?.name!!)
+        val image = imageMetadataRepository.findById(id).awaitSingleOrNull()
+        if (image == null) {
+            return ResponseEntity.notFound().build()
+        }
+
+
+        imageStoreService.deleteImage(image.name)
         imageMetadataRepository.deleteById(id).awaitFirstOrNull()
 
         return ResponseEntity.ok().build()
     }
 
-    private suspend fun imageExists(id: Long): Boolean = imageMetadataRepository.existsById(id).awaitSingle()
+    private suspend fun imageExists(imageId: Long): Boolean = imageMetadataRepository.existsById(imageId).awaitSingle()
 
-    private suspend fun isImageOwner(id: Long, username: String): Boolean {
-        if (!imageExists(id)) {
+    private suspend fun isImageOwner(imageId: Long, username: String): Boolean {
+        if (!imageExists(imageId)) {
             return false
         }
 
-        val imageOwnerMono = imageMetadataRepository.findById(id)
+        val imageOwnerMono = imageMetadataRepository.findById(imageId)
         val tokenOwnerMono = userRepository.findByUsername(username)
 
-        return imageOwnerMono.awaitSingle().id == tokenOwnerMono.awaitSingle().id!!
+        return imageOwnerMono.awaitSingle().ownerId == tokenOwnerMono.awaitSingle().id
     }
 }
