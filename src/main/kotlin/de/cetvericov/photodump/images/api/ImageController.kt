@@ -60,11 +60,17 @@ class ImageController(
         authentication: Authentication
     ): ResponseEntity<Unit> {
 
-        val bytes = filePart.content().map { buffer ->
-            val bytes = ByteArray(buffer.readableByteCount())
-            buffer.read(bytes)
-            bytes
-        }.reduce { acc, bytes -> acc + bytes }.awaitSingle()
+        val bytes = filePart.content().collectList().awaitSingle().let { buffers ->
+            val totalSize = buffers.sumOf { it.readableByteCount() }
+            ByteArray(totalSize).also { result ->
+                var offset = 0
+                buffers.forEach { buffer ->
+                    val size = buffer.readableByteCount()
+                    buffer.read(result, offset, size)
+                    offset += size
+                }
+            }
+        }
 
         imageStoreService.saveImage(filePart.filename(), bytes)
 
