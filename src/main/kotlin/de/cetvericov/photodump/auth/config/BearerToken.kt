@@ -1,4 +1,4 @@
-package de.cetvericov.photodump.security
+package de.cetvericov.photodump.auth.config
 
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority

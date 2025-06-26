@@ -1,4 +1,4 @@
-package de.cetvericov.photodump.security
+package de.cetvericov.photodump.auth.config
 
 import de.cetvericov.photodump.auth.service.JwtService
 import org.springframework.security.authentication.BadCredentialsException
