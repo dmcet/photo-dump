@@ -5,9 +5,8 @@ import de.cetvericov.photodump.images.persistence.entity.ImageMetadataEntity
 import de.cetvericov.photodump.images.persistence.repository.ImageMetadataRepository
 import de.cetvericov.photodump.images.persistence.service.ImageStoreService
 import de.cetvericov.photodump.users.persistence.repository.UserRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
@@ -27,13 +26,16 @@ class ImagesController(
     private val userRepository: UserRepository
 ) {
     @GetMapping
-    fun getImages(): Flow<ImageDto> = imageMetadataRepository.findAll().map(ImageDto.Companion::fromEntity).asFlow()
+    suspend fun getImages(): ImageDto =
+        imageMetadataRepository.findAll().map(ImageDto::fromEntity).awaitSingle()
 
     @GetMapping("/{id}")
     suspend fun getImageData(@PathVariable id: Long): ResponseEntity<ByteArray> {
         val imageOrNull =
             imageMetadataRepository.findById(id).awaitFirstOrNull() ?: return ResponseEntity.notFound().build()
-        val imageBytes = imageStoreService.getImage(imageOrNull.name) ?: return ResponseEntity.notFound().build()
+
+        val imageBytes =
+            imageStoreService.getImage(imageOrNull.name) ?: return ResponseEntity.notFound().build()
 
         val mediaType = determineMediaType(imageOrNull.name)
 
