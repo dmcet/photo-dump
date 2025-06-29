@@ -27,8 +27,19 @@ class ImageController(
     private val userRepository: UserRepository
 ) {
     @GetMapping
-    suspend fun getImages(): List<ImageDto> =
-        imageMetadataRepository.findAll().map(ImageDto::fromEntity).collectList().awaitSingle()
+    suspend fun getImages(authentication: Authentication): ResponseEntity<List<ImageDto>> {
+        val user = userRepository.findByUsername(authentication.principal.toString()).awaitSingleOrNull()
+        if (user == null) {
+            return ResponseEntity.notFound().build()
+        }
+
+        return ResponseEntity
+            .ok()
+            .body(
+                imageMetadataRepository.findByOwnerId(user.id!!).map(ImageDto::fromEntity).collectList().awaitSingle()
+            )
+    }
+
 
     @GetMapping("/{id}")
     suspend fun getImageData(@PathVariable id: Long): ResponseEntity<ByteArray> {
